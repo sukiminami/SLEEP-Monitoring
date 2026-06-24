@@ -1,0 +1,32 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build firmware
+        uses: platformio/platformio-action@v4
+        with:
+          command: run
+          project-dir: .
+
+      - name: Copy firmware to docs folder
+        run: |
+          mkdir -p docs/firmware
+          cp .pio/build/4d_systems_esp32s3_gen4_r8n16/firmware.bin docs/firmware/firmware.bin
+          cp firmware/README.md docs/firmware/README.md
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs
+          force_orphan: true
