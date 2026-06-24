@@ -12,11 +12,18 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Build firmware
-        uses: platformio/platformio-action@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
-          command: run
-          project-dir: .
+          python-version: '3.11'
+
+      - name: Install PlatformIO
+        run: |
+          pip install platformio
+
+      - name: Build firmware
+        run: |
+          pio run
 
       - name: Copy firmware to docs folder
         run: |
